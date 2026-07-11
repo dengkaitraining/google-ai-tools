@@ -47,7 +47,7 @@
  - 1. **解壓縮並移動至系統目錄**（以移動到 /opt 為例）：
 ```sh
 # method 1.
-sudo tar -xzf ~/Downloads/antigravity-linux-x64.tar.gz -C /opt/
+sudo tar -xzf ~/Downloads/Antigravity.tar.gz -C /opt/
 # 修正內建沙盒權限問題（Electron 應用常見需求）
 sudo chown root:root /opt/Antigravity-x64/chrome-sandbox
 sudo chmod 4755 /opt/Antigravity-x64/chrome-sandbox
@@ -113,5 +113,91 @@ source ~/.bashrc
 agy --version
 agy auth login
 ```
+
+### 安裝 ```Anitgravity IDE``` (手動解壓 ```Tarball``` 並建立桌面快捷鍵) - 2026-07-11
+
+ - 1. **解壓縮並移動至系統目錄**（以移動到 /opt 為例）：
+```sh
+# method 1.
+sudo tar -xzf '~/Downloads/Antigravity IDE.tar.gz' -C /opt/
+# 修正內建沙盒權限問題（Electron 應用常見需求）
+sudo chown root:root '/opt/Antigravity IDE/chrome-sandbox'
+sudo chmod 4755 '/opt/Antigravity IDE/chrome-sandbox'
+sudo mv '/opt/Antigravity IDE' /opt/Antigravity-IDE
+
+# method 2.
+cd /opt/google-agy
+tar -xzf 'Antigravity IDE.tar.gz'
+# 修正內建沙盒權限問題（Electron 應用常見需求）
+sudo chown root:root '/opt/google-agy/Antigravity IDE/chrome-sandbox'
+sudo chmod 4755 '/opt/google-agy/Antigravity IDE/chrome-sandbox'
+sudo mv '/opt/google-agy/Antigravity IDE' '/opt/google-agy/Antigravity-IDE'
+```
+
+ - 2. 建立桌面圖示啟動器，方便從應用程式選單點擊啟動：
+```sh
+# method 1.
+cat << 'EOF' > ~/.local/share/applications/antigravity-ide.desktop
+[Desktop Entry]
+Name=Antigravity IDE
+Comment=Antigravity IDE - Experience liftoff
+GenericName=2.0
+Exec="/opt/Antigravity-IDE/antigravity-ide" %F
+Icon="/opt/Antigravity-IDE/resources/app/resources/linux/code.png"
+Type=Application
+Terminal=false
+StartupNotify=true
+StartupWMClass=Antigravity
+Categories=Development;2.0;TextEditor;
+EOF
+
+chmod +x ~/.local/share/applications/antigravity-ide.desktop
+update-desktop-database ~/.local/share/applications
+
+# method 2.
+cat << 'EOF' > ~/.local/share/applications/antigravity-ide.desktop
+[Desktop Entry]
+Name=Antigravity IDE
+Comment=Antigravity IDE - Experience liftoff
+GenericName=2.0
+Exec="/opt/google-agy/Antigravity-IDE/antigravity-ide" %F
+Icon="/opt/google-agy/Antigravity-IDE/resources/app/resources/linux/code.png"
+Type=Application
+Terminal=false
+StartupNotify=true
+StartupWMClass=Antigravity IDE
+Categories=Development;2.0;TextEditor;
+EOF
+
+chmod +x ~/.local/share/applications/antigravity-ide.desktop
+update-desktop-database ~/.local/share/applications
+```
+
+```sh
+sudo ln -s "/opt/google-agy/Antigravity-x64/antigravity" /usr/local/bin/antigravity
+sudo ln -s "/opt/google-agy/Antigravity-IDE/antigravity-ide" /usr/local/bin/antigravity-ide
+```
+
+```ini
+# sudo systemctl reload apparmor
+# /etc/apparmor.d/antigravity-ide
+# This profile allows Antigravity IDE to use unprivileged user namespaces
+abi <abi/4.0>,
+include <tunables/global>
+
+profile antigravity-ide /opt/google-agy/Antigravity-IDE/antigravity-ide flags=(attach_disconnected) {
+  include <abstractions/base>
+  include <abstractions/gnome>
+
+  # 允許使用 user namespace
+  userns,
+
+  # 允許程式執行目錄下的所有檔案
+  /opt/google-agy/Antigravity-IDE/** rmix,
+  owner @{PROC}/@{pid}/   r,
+  owner @{PROC}/@{pid}/** r,
+}
+```
+
  #### 參考資料
   - [Google API Search : 'ubuntu antigravity install'](https://www.google.com/search?q=ubuntu+antigravity+install&sca_esv=a12f55507eaf5fab&sxsrf=APpeQnvIXDdjb8b5YlglxtSVhDqCZXv3mw%3A1783481111880&udm=50&source=chrome.ob&fbs=ABfTbFUhNGvvPEUFOvrsPMHwBXgOKQbaUEtApl9j-7vdAXA5KQzN1WzfUsLBMqckPdakSaEgef0W3ft7jUgHaPpSyiVNyWvj8YQdpeC6WsZG4xN-TSrNaHDwdXF_piJcndrwjHaR9gj3VZxSohG4CAJ5vRfy3cdFeqY2MIn0PdUURyQaB2syTcbieQxG7zVmkRm_dT-ggxGy&aep=1&ntc=1&sa=X&ved=2ahUKEwj2jYzxkMKVAxVQoa8BHXBXH7kQ2J8OegQIERAD&biw=1920&bih=856&dpr=1&mstk=AUtExfA13HDGE9QYTPp3SgMof_OD4YbktlNReU5nYPSeemvriB3l-ufMoq1DzKTgdfDN5_tOsTIzqyJf8KTwmPfMNtwBzvxNjJm8GQl-vYSfR15iG4fblYhKNh3D4weloK9_CyenmljGf7cMkrz1zjgwjNPDC0AOl0q4ZsOqX6MW2me9fh1c_3zS1PXVz2XFiK9mr003lquHOtPQX_K8M8u8t3mt2hE5Df3rpMh9p4NTJEuk1g0cWAII1ZpxDDhLabdIDE3_4Upa5UjEpxFQ6gYw79cdtMR-0EGxoT9oq75Z1565YCgF1nh1ou8QthGvtbVmpcb2cen3UF3gCw&csuir=1&zx=1783481117567&mtid=G8NNaoLTLfjQ1e8Pu4DhqAM)

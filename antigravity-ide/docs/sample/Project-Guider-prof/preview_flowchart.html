@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Guider 協作流程圖預覽</title>
+    <!-- 引入 Tailwind CSS 提供精美排版 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+    <style>
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body class="py-10 px-4 md:px-8 max-w-4xl mx-auto">
+    <header class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-slate-800 mb-2">Project Guider 協作流程圖</h1>
+        <p class="text-slate-600">這是你與 AI 助教在專案開發時的完整互動流程指南</p>
+    </header>
+
+    <main class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 mb-8">
+        <div class="mermaid flex justify-center">
+            graph TD
+                %% 階段一：需求對齊
+                subgraph Phase1 ["階段一：需求對齊"]
+                    A[學生提出開發構想] --> B(助教整理並撰寫 requirements.md)
+                    B --> C{澄清問題與對齊細節}
+                    C -->|未完全對齊| B
+                    C -->|對齊並確認無誤| D[學生在對話框輸入 /edu-plan]
+                end
+
+                %% 階段二：設計與實作
+                subgraph Phase2 ["階段二：設計與實作"]
+                    D --> E(助教撰寫 implementation_plan.md)
+                    E --> F{學生審查實作計畫}
+                    F -->|不同意/需修改| E
+                    F -->|同意並批准 Proceed| G(助教初始化 task.md & 開始實作)
+                    G --> H(依序完成 task.md 中的開發任務)
+                    H --> I[學生在對話框輸入 /edu-verify]
+                end
+
+                %% 階段三：驗證與進化
+                subgraph Phase3 ["階段三：驗證與進化"]
+                    I --> J(助教撰寫 walkthrough.md 成果報告)
+                    J --> K{學生進行功能驗證}
+                    K -->|發現 Bug/未達標| H
+                    K -->|確認完成| L[專案順利交付/沉澱知識 Evolution]
+                end
+
+                %% 樣式設定
+                style D fill:#ffb3ba,stroke:#333,stroke-width:2px
+                style I fill:#baffc9,stroke:#333,stroke-width:2px
+                style Phase1 fill:#f8fafc,stroke:#e2e8f0
+                style Phase2 fill:#f8fafc,stroke:#e2e8f0
+                style Phase3 fill:#f8fafc,stroke:#e2e8f0
+        </div>
+    </main>
+
+    <footer class="text-center text-xs text-slate-400">
+        <p>本網頁由 AI 助教自動產生，供學生本地快速預覽流程圖使用。</p>
+    </footer>
+</body>
+</html>

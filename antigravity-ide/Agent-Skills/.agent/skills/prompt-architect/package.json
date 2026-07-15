@@ -1,0 +1,10 @@
+{
+  "name": "prompt-architect",
+  "version": "1.0.0",
+  "description": "Scaffolds robust Agent skills with optimized prompts and structure.",
+  "main": "scripts/scaffold.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "private": true
+}

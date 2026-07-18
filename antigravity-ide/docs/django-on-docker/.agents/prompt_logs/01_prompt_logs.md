@@ -130,3 +130,4 @@ name: django-on-docker
 description: 提供基於 Docker Compose 容器化技術之 Python Django 5.2 LTS、Vue.js 3.5、MariaDB 12.3、Redis 8.8 與 Apache HTTPD 多容器開發環境建立、管理、維護與自動化檢查指南。
 ---
 # 2. 準則 (rules)：準則細部資訊，以 markdown 檔案儲存在 /home/dengkai/projects/django-on-docker/.agents/skills/django-on-docker/rules/ 的資料夾內。
+# 3. 標題「2. 角色定位 (Role)」修改「1. 角色定位 (Role)」，並依序修改調整標題順序資訊。

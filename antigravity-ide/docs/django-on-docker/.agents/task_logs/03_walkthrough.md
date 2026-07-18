@@ -1,18 +1,28 @@
-# Django + Vue.js 開發環境逐步解說與驗證報告 (Walkthrough)
+# Django 5.2 + Vue.js 3.5 開發環境逐步解說與驗證報告 (Walkthrough)
 
-本報告記載 **Python Django 5.2 + Vue 3.5 + Apache HTTPD + MariaDB 12.3 + Redis 8.8** 容器化環境之完整測試驗證結果、檔案架構與註解說明。
+本報告記載 **Python Django 5.2 + Vue 3.5 + Apache HTTPD + MariaDB 12.3 + Redis 8.8** 容器化環境之完整測試驗證結果、MariaDB 與 Django 協作機制與檔案架構說明。
 
 ---
 
-## 1. 服務運行狀態與 HTTP 端點測試結果
+## 1. MariaDB 12.3 與 Django 5.2 協作運作驗證結果
 
-已透過實際 `curl` 測試驗證所有服務端點運作正常：
+專案中 **MariaDB 12.3 資料庫**與 **Django 5.2 LTS** 透過以下 5 大運作階段達成高可靠連線與資料持久化：
+
+```text
+[1. 驅動層 binding]     Django 5.2 ORM -> mysqlclient (C-Extension) -> MariaDB 12.3 (3306 Port)
+[2. 健康等待機制]       entrypoint.sh 執行 nc -z db 3306 輪詢直至 MariaDB 完成初始化
+[3. 資料庫 Schema 遷移] python manage.py migrate --noinput (建置 auth_user, django_session 等表)
+[4. 自動初始化 Superuser] 執行 Python 腳本查詢 auth_user 表，自動建立 Django Unfold 管理員
+[5. 即時連線與持久化]   /api/status/ 執行 connection.cursor().execute("SELECT 1")，資料存於 ./db_data
+```
+
+### 服務連線測試結果
 
 | 測試網址 | 預期 HTTP 狀態與回應內容 | 實測驗證結果 |
 | :--- | :--- | :--- |
 | **`http://localhost/`** | 回應 200 OK 純文字：`Django + Vue.js Web 資訊系統開發環境的服務已啟用。` | **成功 (200 OK)** |
 | **`http://localhost/tech-stack/`** | 回應 200 OK HTML 頁面，載入 Vue 3.5 資訊系統儀表板 (含 10 分鐘自動檢測) | **成功 (200 OK)** |
-| **`http://localhost/admin/`** | 回應 200 OK HTML 頁面，載入 Django Unfold 後台管理介面 | **成功 (200 OK)** |
+| **`http://localhost/admin/`** | 回應 200 OK HTML 頁面，載入 Django Unfold 後台管理介面 (資料儲存於 MariaDB 12.3 `auth_user`) | **成功 (200 OK)** |
 | **`http://localhost/api/status/`** | 回應 200 OK JSON 數據：`{"status": "online", "database": {"status": "connected"}, "redis": {"status": "connected"}}` | **成功 (200 OK)** |
 
 ---

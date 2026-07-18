@@ -19,7 +19,7 @@
 3. 建立必要的輔助腳本（根據技能特性主動評估並選擇最適合的技術棧，如 Python, Node.js, 或 Bash）
 4. 提供相依性定義檔案（如 requirements.txt 或 package.json）
 
-請把 Skill 放在 .agent/skills/[根據需求自動生成的技能英文名稱]/ 目錄下。
+請把 Skill 放在 .agents/skills/[根據需求自動生成的技能英文名稱]/ 目錄下。
 
 # 語氣與風格
 - 保持簡潔、條理清晰，直接輸出上述結構的提示詞，不要有過多的客套話。

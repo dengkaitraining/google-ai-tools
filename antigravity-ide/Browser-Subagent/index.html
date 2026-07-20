@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="一個極簡、現代且功能強大的純 Vanilla JS 待辦事項網頁應用。支援本地儲存、狀態篩選與動態卡片。">
+  <title>我的待辦事項</title>
+  
+  <!-- 載入 Google Fonts 現代字型 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- 主樣式表 -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 背景流光光暈裝飾 -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <!-- 主要應用容器 -->
+  <div class="app-container">
+    
+    <!-- 頁面標頭 -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 11 12 14 22 4"></polyline>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+        </div>
+        <div class="brand-title">
+          <h1>我的待辦事項</h1>
+          <p>優雅管理您的日常任務與目標</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- 任務完成進度卡片 -->
+    <section class="progress-card">
+      <div class="progress-header">
+        <div class="progress-info">
+          <span class="progress-title">目前完成度</span>
+          <span class="progress-percentage" id="progress-text">0%</span>
+        </div>
+        <div class="stats-counters">
+          <span class="counter-badge" id="stats-summary">0 個項目待完成</span>
+        </div>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill" style="width: 0%;"></div>
+      </div>
+    </section>
+
+    <!-- 待辦事項輸入表單 -->
+    <section class="input-section">
+      <form id="todo-form" class="todo-form">
+        <div class="input-wrapper">
+          <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+          <input 
+            type="text" 
+            id="todo-input" 
+            class="todo-input" 
+            placeholder="新增待辦事項... (按 Enter 或點擊新增)" 
+            autocomplete="off"
+            aria-label="新增待辦事項"
+          >
+          <button type="submit" id="add-btn" class="btn btn-primary" aria-label="新增事項">
+            <span>新增</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- 篩選列與批次動作工具列 -->
+    <section class="toolbar-section">
+      <div class="filter-tabs" role="tablist" aria-label="事項篩選">
+        <button type="button" class="filter-tab active" data-filter="all" id="filter-all" role="tab" aria-selected="true">
+          全部 <span class="badge" id="badge-all">0</span>
+        </button>
+        <button type="button" class="filter-tab" data-filter="active" id="filter-active" role="tab" aria-selected="false">
+          未完成 <span class="badge" id="badge-active">0</span>
+        </button>
+        <button type="button" class="filter-tab" data-filter="completed" id="filter-completed" role="tab" aria-selected="false">
+          已完成 <span class="badge" id="badge-completed">0</span>
+        </button>
+      </div>
+
+      <button type="button" id="clear-completed-btn" class="btn btn-ghost" aria-label="清除已完成事項">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        <span>清除已完成</span>
+      </button>
+    </section>
+
+    <!-- 待辦事項清單列表容器 -->
+    <main class="list-section">
+      <ul id="todo-list" class="todo-list" aria-label="待辦事項列表"></ul>
+
+      <!-- 空白狀態提示區域 -->
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <h3 id="empty-title">沒有待辦事項</h3>
+        <p id="empty-desc">在上方輸入框新增第一個事項開始記錄吧！</p>
+      </div>
+    </main>
+
+    <!-- 頁尾聲明 -->
+    <footer class="app-footer">
+      <p>資料自動儲存於 LocalStorage • ES6+ Pure JavaScript</p>
+    </footer>
+
+  </div>
+
+  <!-- 載入應用邏輯腳本 -->
+  <script src="app.js"></script>
+</body>
+</html>
